@@ -39,7 +39,9 @@ public:
                X = 1<<9,
                Y = 1<<10,
                Z = 1<<11,
-               MODE = 1<<12};
+               MODE = 1<<12,
+               BTNCOUNT=13
+  };
   void setup();
   MegaController();
   uint16_t readButtons(uint8_t player);
