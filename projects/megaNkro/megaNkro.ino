@@ -1,3 +1,5 @@
+#include <MegaController.h>
+
 #include <VusbKeyboard.h>
 #include <usbHidConstants.h>
 

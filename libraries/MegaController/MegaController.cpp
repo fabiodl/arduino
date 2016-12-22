@@ -2,11 +2,11 @@
 #include <Arduino.h>
 typedef struct
 {
-  int player;
-  int pin;
-  int lowFlag;
-  int highFlag;
-  int pulse3Flag;
+  uint8_t player;
+  uint8_t pin;
+  uint16_t lowFlag;
+  uint16_t highFlag;
+  uint16_t pulse3Flag;
 } input;
  
 
@@ -16,7 +16,7 @@ typedef struct
 
  
 // Controller DB9 Pin 7 Mappings
-const int SELECT[] = { 8, 9 };
+const uint8_t SELECT[] = { 8, 9 };
  
 input inputMap[] = {
   { 0,  0,  MegaController::UP,    MegaController::UP,     MegaController::Z    }, // P0 DB9 Pin 1
@@ -33,16 +33,10 @@ input inputMap[] = {
   { 1,  A5, MegaController::START, MegaController::C,                           }  // P1 DB9 Pin 9
 };
  
-typedef struct
-{
-  int player;
-  int flag;
-  char key;
-} output;
  
 
 MegaController::MegaController(){
-  for (int i=0;i<PLAYERS;i++){
+  for (uint8_t i=0;i<PLAYERS;i++){
     sixButtonMode[i]=0;
     currentState[i]=0;
   }
@@ -50,14 +44,14 @@ MegaController::MegaController(){
 
 void MegaController::setup(){
   // Setup input pins
-  for (int i = 0; i < sizeof(inputMap) / sizeof(input); i++)
+  for (uint8_t i = 0; i < sizeof(inputMap) / sizeof(input); i++)
   {
     pinMode(inputMap[i].pin, INPUT);
     digitalWrite(inputMap[i].pin, HIGH);
   }
   
   // Setup select pins
-  for (int i = 0; i < PLAYERS; i++)
+  for (uint8_t i = 0; i < PLAYERS; i++)
   {
     pinMode(SELECT[i], OUTPUT);
     digitalWrite(SELECT[i], HIGH);
@@ -69,27 +63,25 @@ void MegaController::setup(){
 
 
 
-void MegaController::resetState(int player)
+void MegaController::resetState(uint8_t player)
 {
   currentState[player] = 0;
 }
 
-void MegaController::readButtons(){
-  for (int i = 0; i < PLAYERS; i++)
-  {
-    resetState(i);
-    if (sixButtonMode[i])
+uint16_t MegaController::readButtons(uint8_t player){
+  resetState(player);
+  if (sixButtonMode[player])
     {
-      read6buttons(i);
+      read6buttons(player);
     }
-    else
+  else
     {
-      read3buttons(i);
+      read3buttons(player);
     }
-  }
+  return currentState[player];
 }
 
-void MegaController::read3buttons(int player)
+void MegaController::read3buttons(uint8_t player)
 {
   // Set SELECT LOW and read lowFlag
   digitalWrite(SELECT[player], LOW);
@@ -133,7 +125,7 @@ void MegaController::read3buttons(int player)
 }
 
 
-void MegaController::read6buttons(int player)
+void MegaController::read6buttons(uint8_t player)
 {
   // Poll for three-button states twice
   read3buttons(player);
@@ -145,7 +137,7 @@ void MegaController::read6buttons(int player)
   delayMicroseconds(20);
   digitalWrite(SELECT[player], HIGH);
   
-  for(int i = 0; i < sizeof(inputMap) / sizeof(input); i++)
+  for(uint8_t i = 0; i < sizeof(inputMap) / sizeof(input); i++)
   {
     if (inputMap[i].player == player && digitalRead(inputMap[i].pin) == LOW)
     {

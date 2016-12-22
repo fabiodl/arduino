@@ -41,17 +41,17 @@ public:
                Z = 1<<11,
                MODE = 1<<12};
   void setup();
-  int16_t getState();
   MegaController();
+  uint16_t readButtons(uint8_t player);
 private:
   
-  void readButtons();
-  void resetState(int player);
-  void read3buttons(int player);
-  void read6buttons(int player);
+
+  void resetState(uint8_t player);
+  void read3buttons(uint8_t player);
+  void read6buttons(uint8_t player);
 
   bool sixButtonMode[2] = { false, false };
-  int currentState[2];
+  uint16_t currentState[2];
 };
  
 
